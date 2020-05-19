@@ -57,4 +57,4 @@ The report contains all the runs and also the outcome (false if any run failed)
 
 # acknowledgements
 
-cartesion.go was heavily inspired (copied) from https://github.com/schwarmco/go-cartesian-product, thanks Joachim Swarm
+cartesian.go was heavily inspired (copied) from https://github.com/schwarmco/go-cartesian-product, thanks Joachim Swarm
