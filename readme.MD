@@ -16,6 +16,10 @@ And groundgopher will run 4 \* 4 \* 4 \* = 64 tests.
 
 ## glossary
 
+### groundgopher
+
+A combination of a groundhog and a gopher. And the groundhog was chosen because of groundhog day, as it resembles API development quite well. Attempting day after day to make the subtle changes to make everything right.
+
 ### variable
 
 A variable within groundgopher is a single parameter in the request that gets manipulated by a list of manipulators.  
