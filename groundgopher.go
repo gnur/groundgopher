@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"math/rand"
 	"net/http"
 	"net/url"
 	"strings"
@@ -14,6 +15,8 @@ import (
 
 	"github.com/oliveagle/jsonpath"
 )
+
+var charSet = []rune("1234567890abcdefghijklmnopqrstuvwxyz")
 
 type Option func(gg *GroundGopher)
 
@@ -129,6 +132,8 @@ func (gg *GroundGopher) requestWorker(runCh chan Run, caseCh chan []Case, verbos
 		}
 
 		fmt.Printf("Starting run: %s\n", strings.Join(run.Cases, " "))
+		ua := fmt.Sprintf("groundgopher-%s", randID())
+		in.Req.Header.Set("User-Agent", ua)
 
 		before := time.Now()
 		resp, err := in.Client.Do(&in.Req)
@@ -149,6 +154,7 @@ func (gg *GroundGopher) requestWorker(runCh chan Run, caseCh chan []Case, verbos
 		out.Body = body
 		out.StatusCode = resp.StatusCode
 		out.Resp = resp
+		out.UserAgent = ua
 		out.Duration = timeTaken
 		run.Duration = timeTaken
 		run.StatusCode = resp.StatusCode
@@ -172,6 +178,7 @@ func (gg *GroundGopher) requestWorker(runCh chan Run, caseCh chan []Case, verbos
 }
 
 func (gg *GroundGopher) Run(t *testing.T) Report {
+	rand.Seed(time.Now().Unix())
 
 	var report Report
 
@@ -235,6 +242,7 @@ type Out struct {
 	Body       []byte
 	StatusCode int
 	Duration   time.Duration
+	UserAgent  string
 }
 
 func (out *Out) JSONPathLookup(s string) (interface{}, error) {
@@ -297,4 +305,15 @@ func (r *Report) Summary() string {
 		return fmt.Sprintf("Completed %v requests in %s, average time: %s", r.Amount, r.TotalTime.String(), avgString)
 	}
 	return fmt.Sprintf("Completed %v (%v failed) requests in %s", r.Amount, r.Fails, r.TotalTime.String())
+}
+
+func randID() string {
+	var output strings.Builder
+	length := 10
+	for i := 0; i < length; i++ {
+		random := rand.Intn(len(charSet))
+		randomChar := charSet[random]
+		output.WriteRune(randomChar)
+	}
+	return output.String()
 }
